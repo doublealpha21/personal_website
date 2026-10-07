@@ -1,0 +1,272 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  color-scheme: light;
+  --background: #eceee9;
+  --foreground: #11151c;
+  --card: #f6f7f3;
+  --card-foreground: #11151c;
+  --popover: #f6f7f3;
+  --popover-foreground: #11151c;
+  --primary: #1d3cc9;
+  --primary-foreground: #f6f7f3;
+  --secondary: #e1e4dd;
+  --secondary-foreground: #11151c;
+  --muted: #e1e4dd;
+  --muted-foreground: #565d68;
+  --accent: #e9a23b;
+  --accent-foreground: #11151c;
+  --destructive: #b42318;
+  --border: #c9cdc4;
+  --input: #c9cdc4;
+  --ring: #1d3cc9;
+  --radius: 0.25rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.animate-grow {
+  transform-origin: left;
+  animation: grow 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-grow {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Visible keyboard focus everywhere, in the site's blue. */
+:focus-visible {
+  outline-color: var(--ring);
+}
+
+/* ------------------------------------------------------------------ */
+/* Body copy for case studies and writing (rendered from Notion)       */
+/* ------------------------------------------------------------------ */
+.notion-body {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--foreground);
+  overflow-wrap: break-word;
+}
+.notion-body > * + * {
+  margin-top: 1.25em;
+}
+.notion-body h2,
+.notion-body h3,
+.notion-body h4 {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.notion-body h2 {
+  margin-top: 2.25em;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--foreground);
+  font-size: 1.75rem;
+}
+.notion-body h3 {
+  margin-top: 1.75em;
+  font-size: 1.375rem;
+}
+.notion-body h4 {
+  margin-top: 1.5em;
+  font-size: 1.125rem;
+}
+.notion-body a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+.notion-body a:hover {
+  text-decoration-thickness: 2px;
+}
+.notion-body ul,
+.notion-body ol {
+  padding-left: 1.5rem;
+}
+.notion-body ul {
+  list-style: square;
+}
+.notion-body ol {
+  list-style: decimal;
+}
+.notion-body li + li,
+.notion-body li > * + * {
+  margin-top: 0.5em;
+}
+.notion-body li::marker {
+  color: var(--muted-foreground);
+}
+.notion-body blockquote {
+  border-left: 2px solid var(--foreground);
+  padding-left: 1.25rem;
+  color: var(--muted-foreground);
+}
+.notion-body code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--secondary);
+  border-radius: 2px;
+  padding: 0.1em 0.35em;
+}
+.notion-body pre {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  padding: 1rem 1.25rem;
+  background: var(--foreground);
+  color: var(--background);
+  border-radius: var(--radius);
+  min-width: max-content;
+}
+.notion-body pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+.notion-body hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 2.5em 0;
+}
+.notion-body figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+.notion-body .notion-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius);
+}
+.notion-body .notion-scroll:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.notion-body table {
+  width: 100%;
+  min-width: max-content;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.notion-body th,
+.notion-body td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+.notion-body th {
+  background: var(--secondary);
+  font-weight: 600;
+}
+.notion-body .notion-callout {
+  display: flex;
+  gap: 0.75rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+.notion-body details {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 0;
+}
+.notion-body details > summary {
+  cursor: pointer;
+  font-weight: 500;
+}
+.notion-body details[open] > summary {
+  margin-bottom: 0.75rem;
+}
+.notion-body .notion-bookmark {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 0.875rem 1rem;
+  word-break: break-all;
+}
