@@ -12,8 +12,6 @@ export function Hero({ actions }: { actions?: React.ReactNode } = {}) {
           <span>{profile.location}</span>
           <span aria-hidden="true">/</span>
           <span>Engineering × Operations</span>
-          <span aria-hidden="true">/</span>
-          <span>2022 — 2026</span>
         </div>
 
         <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">

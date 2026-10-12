@@ -12,9 +12,11 @@ export const metadata: Metadata = {
   description:
     'One-page portfolio of Praise Fakorede: engineering and operations work across fintech, health-tech, proptech, Web3, live events and energy.',
   alternates: { canonical: '/portfolio' },
+  // Sent to clients directly, so keep it out of search results.
+  robots: { index: false, follow: false },
 }
 
-/** The original one-page portfolio, kept intact so it can be shared on its own. */
+/** The original one-page portfolio, unlinked from the site and sent to clients directly as a deck. */
 export default function PortfolioPage() {
   return (
     <>
