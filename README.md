@@ -1,6 +1,6 @@
 # Praise Fakorede — personal site
 
-Multi-page site built on the original one-page portfolio. Case studies and writing are written in Notion and appear on the site when their status is set to Published. The original portfolio still lives, unchanged, at `/portfolio`.
+Multi-page site built on the original one-page portfolio. Case studies and writing are written in Notion and appear on the site when their status is set to Published. The original portfolio lives at `/portfolio` as a standalone deck for clients.
 
 ## Pages
 
@@ -12,7 +12,7 @@ Multi-page site built on the original one-page portfolio. Case studies and writi
 | `/work`, `/work/[slug]` | Case studies from Notion, filterable by tag |
 | `/writing`, `/writing/[slug]` | Writing from Notion, filterable by tag, with reading time |
 | `/contact` | Contact form, email and LinkedIn |
-| `/portfolio` | The original one-page portfolio, shareable on its own |
+| `/portfolio` | The original one-page portfolio. Not linked from the site and not indexed; send the link to clients directly |
 | `/feed.xml` | RSS feed of everything published |
 
 ## One-time setup

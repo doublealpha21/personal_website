@@ -34,9 +34,6 @@ export function SiteFooter() {
             {profile.name} · {profile.role}
           </span>
           <span className="flex flex-wrap gap-x-6 gap-y-2">
-            <Link href="/portfolio" className="underline underline-offset-4 hover:text-primary-foreground">
-              One-page portfolio
-            </Link>
             <a href="/feed.xml" className="underline underline-offset-4 hover:text-primary-foreground">
               RSS feed
             </a>

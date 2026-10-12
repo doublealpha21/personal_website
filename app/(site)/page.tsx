@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { Hero } from '@/components/portfolio/hero'
 import { Results } from '@/components/portfolio/results'
+import { LogoStrip } from '@/components/site/logo-strip'
 import { SectionHeader } from '@/components/site/section-header'
 import { PageSection } from '@/components/site/page-section'
 import { EntryGrid } from '@/components/site/entry-card'
@@ -40,15 +41,11 @@ export default async function HomePage() {
               See the two tracks
               <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
-            <Link
-              href="/portfolio"
-              className="inline-flex items-center gap-2 rounded-sm border border-foreground px-4 py-3 text-sm font-medium transition-colors hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2"
-            >
-              One-page portfolio
-            </Link>
           </div>
         }
       />
+
+      <LogoStrip />
 
       <Results
         items={selectedResults}

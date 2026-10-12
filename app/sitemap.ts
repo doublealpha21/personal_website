@@ -5,7 +5,7 @@ import { siteUrl } from '@/lib/site'
 export const revalidate = 600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const pages = ['', '/about', '/experience', '/work', '/writing', '/contact', '/portfolio'].map((path) => ({
+  const pages = ['', '/about', '/experience', '/work', '/writing', '/contact'].map((path) => ({
     url: `${siteUrl}${path}`,
     changeFrequency: 'monthly' as const,
     priority: path === '' ? 1 : 0.7,
