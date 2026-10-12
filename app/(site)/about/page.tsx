@@ -40,7 +40,7 @@ export default function AboutPage() {
               That shows up in the operations work. At Hugheston Energies the CEO brought me in as an executive
               assistant and kept handing me the next unsolved problem, from designing the Solar division to building the
               back office for the Energy Trading desk. At v0 by Vercel&apos;s live AI training in Lagos I ran technical
-              operations, sitting between the instructor and the logistics team so the room stayed stable.
+              operations, sitting between the instructor and the audience to ensure maximum value.
             </p>
             <p className="text-muted-foreground">
               Engineering taught me to look for the structural gap before touching the process layer. Operations is
