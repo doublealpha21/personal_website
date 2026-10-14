@@ -6,7 +6,7 @@ export const revalidate = 600
 
 export const metadata: Metadata = {
   title: 'Writing',
-  description: 'Essays and notes by Praise Fakorede on operations, finance and building systems.',
+  description: 'Thoughts by Praise Fakorede on faith, finance, work and growth.',
   alternates: { canonical: '/writing' },
 }
 
@@ -18,7 +18,7 @@ export default async function WritingPage({ searchParams }: { searchParams: Prom
       type="writing"
       code="Sheet 01 — Writing"
       title="Writing."
-      description="Essays and notes on operations, finance and building systems, published as I write them."
+      description="Thoughts on faith, finance, work and growth. A place to think out loud and sharpen my writing."
       entries={entries}
       tags={tags}
       activeTag={typeof tag === 'string' ? tag : null}

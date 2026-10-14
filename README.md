@@ -1,6 +1,6 @@
 # Praise Fakorede — personal site
 
-Multi-page site built on the original one-page portfolio. Case studies and writing are written in Notion and appear on the site when their status is set to Published. The original portfolio lives at `/portfolio` as a standalone deck for clients.
+Multi-page site built on the original one-page portfolio. Live at https://praisefakorede.vercel.app. Case studies and writing are written in Notion and appear on the site when their status is set to Published. The original portfolio lives at `/portfolio` as a standalone deck for clients.
 
 ## Pages
 
@@ -55,7 +55,7 @@ Project → Settings → Environment Variables.
 
 - `NOTION_TOKEN`, `NOTION_WRITING_DATABASE_ID` and `NOTION_WORK_DATABASE_ID` from step 2.
 - `REVALIDATE_SECRET`, any long random string.
-- `NEXT_PUBLIC_SITE_URL`, your live address, for example `https://princepraisefakorede.vercel.app`.
+- `NEXT_PUBLIC_SITE_URL`, the live address: `https://praisefakorede.vercel.app`.
 
 Redeploy after adding them.
 
