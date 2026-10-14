@@ -11,57 +11,61 @@ Multi-page site built on the original one-page portfolio. Case studies and writi
 | `/experience` | The two-track timeline and every role, with a link to a case study where one exists |
 | `/work`, `/work/[slug]` | Case studies from Notion, filterable by tag |
 | `/writing`, `/writing/[slug]` | Writing from Notion, filterable by tag, with reading time |
-| `/contact` | Contact form, email and LinkedIn |
+| `/contact` | Cal.com booking link, email and LinkedIn |
 | `/portfolio` | The original one-page portfolio. Not linked from the site and not indexed; send the link to clients directly |
 | `/feed.xml` | RSS feed of everything published |
 
 ## One-time setup
 
-### 1. Create the Notion database
+### 1. Set up the two Notion databases
 
-Create a full-page database in Notion (call it something like "Website") with these properties. Names must match, though capitalisation does not matter.
+Writing and case studies live in separate databases:
 
-| Property | Type | Notes |
-| --- | --- | --- |
-| Title | Title | The default title column, any name works |
-| Type | Select | Options: `Case study`, `Writing` |
-| Status | Status or Select | Only `Published` appears on the site |
-| Publish date | Date | Entries dated in the future stay hidden until that day |
-| Subtitle | Text | Shown under the title |
-| Summary | Text | One line, used in link previews and the RSS feed |
-| Tags | Multi-select | Used for the tag filter |
-| Featured | Checkbox | Puts a case study on the homepage |
-| Slug | Text | Optional. Sets the web address. Leave empty to build it from the title |
-| Role | Select | Optional. Links a case study to a role on /experience. Use the organisation name, for example `BCP Origins` or `Hugheston Energies` |
-| Substack URL | URL | Optional. Adds an "Also published on Substack" link |
+- **Writing** is your existing blog database ("Thoughts and Exposé's"). Every page in it counts as writing, so it needs no Type column.
+- **Case studies** is a new full-page database (call it something like "Case studies"). Add one page per project when it is ready to share.
+
+Add these properties to each. Names must match, though capitalisation does not matter.
+
+| Property | Type | Writing | Case studies | Notes |
+| --- | --- | --- | --- | --- |
+| Title | Title | ✓ | ✓ | The default title column, any name works |
+| Status | Status or Select | ✓ | ✓ | Only `Published` appears on the site, so you choose post by post |
+| Publish date | Date | optional | optional | Defaults to the page's created date. Future dates stay hidden until that day |
+| Summary | Text | optional | ✓ | One line, used on cards, link previews and the RSS feed |
+| Subtitle | Text | optional | optional | Shown under the title |
+| Tags | Multi-select | optional | optional | Used for the tag filter |
+| Featured | Checkbox | | optional | Puts a case study on the homepage |
+| Role | Select | | optional | Links a case study to a role on /experience. Use the organisation name, for example `BCP Origins` or `Hugheston Energies` |
+| Slug | Text | optional | optional | Sets the web address. Leave empty to build it from the title |
+| Substack URL | URL | optional | | Adds an "Also published on Substack" link |
 
 The page cover (Add cover, at the top of a Notion page) becomes the cover image. Without one, the site shows a title card in the site colours.
 
 ### 2. Connect Notion to the site
 
 1. Go to notion.so/profile/integrations, create a new internal integration called "Website", and copy its secret. That is `NOTION_TOKEN`.
-2. Open the database, click `•••` in the top right, choose Connections, and add the "Website" integration. Share only this database with it.
-3. Copy the database ID from its URL: the 32-character string just before `?v=`. That is `NOTION_DATABASE_ID`.
+2. Open each database, click `•••` in the top right, choose Connections, and add the "Website" integration. Share only these two databases with it.
+3. Copy each database's ID: the 32-character string just before `?v=` in its link. For a database inside another page, hover over it and use `•••` → Copy link to view. The writing one is `NOTION_WRITING_DATABASE_ID`, the case studies one is `NOTION_WORK_DATABASE_ID`.
+
+(A single combined database still works: set `NOTION_DATABASE_ID` instead and add a `Type` select with `Case study` and `Writing`.)
 
 ### 3. Set environment variables in Vercel
 
-Project → Settings → Environment Variables. See `.env.example` for the full list.
+Project → Settings → Environment Variables.
 
-- `NOTION_TOKEN`, `NOTION_DATABASE_ID` from step 2.
-- `RESEND_API_KEY` from resend.com (free tier is enough). `CONTACT_TO_EMAIL` is where messages arrive.
-- `CONTACT_FROM_EMAIL` is optional. Until you verify a domain in Resend, leave it empty and Resend will only deliver to the email address on your Resend account, so sign up to Resend with the address you want messages sent to.
+- `NOTION_TOKEN`, `NOTION_WRITING_DATABASE_ID` and `NOTION_WORK_DATABASE_ID` from step 2.
 - `REVALIDATE_SECRET`, any long random string.
-- `NEXT_PUBLIC_SITE_URL`, your live address, for example `https://praisefakorede.com`.
+- `NEXT_PUBLIC_SITE_URL`, your live address, for example `https://princepraisefakorede.vercel.app`.
 
 Redeploy after adding them.
 
 ## Publishing
 
-1. Write the page in Notion and fill in the properties.
-2. Set Status to `Published` and make sure Publish date is today or earlier.
+1. Write the page in the writing or case studies database and fill in the properties.
+2. Set Status to `Published`. If Publish date is set, make sure it is today or earlier.
 3. The site checks Notion every ten minutes, so the page appears within ten minutes.
 
-To publish instantly, open the database's automations (lightning icon, available on paid Notion plans), add a trigger "When Status is set to Published", and an action "Send webhook" to:
+To publish instantly, open each database's automations (lightning icon, available on paid Notion plans), add a trigger "When Status is set to Published", and an action "Send webhook" to:
 
 ```
 https://YOUR-SITE/api/revalidate?secret=YOUR_REVALIDATE_SECRET
@@ -83,7 +87,7 @@ Substack has no publishing API, so cross-posting is manual. Publish on the site 
 
 ## Editing the fixed content
 
-Roles, results, capabilities and credentials live in `lib/portfolio-data.ts`. The timeline positions every role from its `start` and `end` dates, so adding a role means adding one object to `roles` and choosing a free `row` within its track. The visible range is set at the top of `components/portfolio/dual-track-timeline.tsx`.
+Roles, results, capabilities, credentials and contact details (email, LinkedIn, the Cal.com booking link) live in `lib/portfolio-data.ts`. The timeline positions every role from its `start` and `end` dates, so adding a role means adding one object to `roles` and choosing a free `row` within its track. The visible range is set at the top of `components/portfolio/dual-track-timeline.tsx`.
 
 ## How the code is organised
 
@@ -101,7 +105,7 @@ app/
   feed.xml/  sitemap.ts  robots.ts  opengraph-image.tsx  not-found.tsx
 components/
   portfolio/                 original portfolio components (reused across the site)
-  site/                      navigation, footer, cards, tags, covers, Notion renderer, contact form
+  site/                      navigation, footer, cards, tags, covers, Notion renderer
 lib/
   content/index.ts           the content layer every page reads from
   content/notion.ts          the Notion source

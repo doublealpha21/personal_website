@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
-import { ArrowUpRight } from 'lucide-react'
-import { ContactForm } from '@/components/site/contact-form'
+import { ArrowUpRight, CalendarDays } from 'lucide-react'
 import { SectionHeader } from '@/components/site/section-header'
 import { PageSection } from '@/components/site/page-section'
 import { profile } from '@/lib/portfolio-data'
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Send Praise Fakorede a message, or reach him by email or LinkedIn.',
+  description: 'Book a 30-minute call with Praise Fakorede, or reach him by email or LinkedIn.',
   alternates: { canonical: '/contact' },
 }
 
@@ -18,12 +17,28 @@ export default function ContactPage() {
         as="h1"
         id="contact-title"
         code="Sheet 01 — Contact"
-        title="Send me a message."
-        description="Tell me what you are building and where it is getting stuck. I reply to every message, usually within a few days."
+        title="Book a call."
+        description="Thirty minutes to understand what you are building, where it is getting stuck, and whether I can help. Come with the problem; no prep needed."
       />
       <div className="grid gap-12 md:grid-cols-12">
         <div className="md:col-span-7">
-          <ContactForm />
+          <div className="flex flex-col gap-6 rounded-sm border border-border bg-card p-6 md:p-8">
+            <p className="text-pretty text-lg leading-relaxed">
+              Pick a time that suits you. The booking page shows my availability in your time zone and sends a calendar
+              invite with the call link.
+            </p>
+            <a
+              href={profile.booking}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 self-start rounded-sm bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <CalendarDays className="size-4" aria-hidden="true" />
+              Book a 30-minute call
+              <ArrowUpRight className="size-4" aria-hidden="true" />
+              <span className="sr-only">(opens cal.com in a new tab)</span>
+            </a>
+          </div>
         </div>
         <aside aria-labelledby="direct-title" className="flex flex-col gap-6 md:col-span-4 md:col-start-9">
           <h2 id="direct-title" className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
