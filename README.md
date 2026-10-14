@@ -17,37 +17,43 @@ Multi-page site built on the original one-page portfolio. Case studies and writi
 
 ## One-time setup
 
-### 1. Create the Notion database
+### 1. Set up the two Notion databases
 
-Create a full-page database in Notion (call it something like "Website") with these properties. Names must match, though capitalisation does not matter.
+Writing and case studies live in separate databases:
 
-| Property | Type | Notes |
-| --- | --- | --- |
-| Title | Title | The default title column, any name works |
-| Type | Select | Options: `Case study`, `Writing` |
-| Status | Status or Select | Only `Published` appears on the site |
-| Publish date | Date | Entries dated in the future stay hidden until that day |
-| Subtitle | Text | Shown under the title |
-| Summary | Text | One line, used in link previews and the RSS feed |
-| Tags | Multi-select | Used for the tag filter |
-| Featured | Checkbox | Puts a case study on the homepage |
-| Slug | Text | Optional. Sets the web address. Leave empty to build it from the title |
-| Role | Select | Optional. Links a case study to a role on /experience. Use the organisation name, for example `BCP Origins` or `Hugheston Energies` |
-| Substack URL | URL | Optional. Adds an "Also published on Substack" link |
+- **Writing** is your existing blog database ("Thoughts and Exposé's"). Every page in it counts as writing, so it needs no Type column.
+- **Case studies** is a new full-page database (call it something like "Case studies"). Add one page per project when it is ready to share.
+
+Add these properties to each. Names must match, though capitalisation does not matter.
+
+| Property | Type | Writing | Case studies | Notes |
+| --- | --- | --- | --- | --- |
+| Title | Title | ✓ | ✓ | The default title column, any name works |
+| Status | Status or Select | ✓ | ✓ | Only `Published` appears on the site, so you choose post by post |
+| Publish date | Date | optional | optional | Defaults to the page's created date. Future dates stay hidden until that day |
+| Summary | Text | optional | ✓ | One line, used on cards, link previews and the RSS feed |
+| Subtitle | Text | optional | optional | Shown under the title |
+| Tags | Multi-select | optional | optional | Used for the tag filter |
+| Featured | Checkbox | | optional | Puts a case study on the homepage |
+| Role | Select | | optional | Links a case study to a role on /experience. Use the organisation name, for example `BCP Origins` or `Hugheston Energies` |
+| Slug | Text | optional | optional | Sets the web address. Leave empty to build it from the title |
+| Substack URL | URL | optional | | Adds an "Also published on Substack" link |
 
 The page cover (Add cover, at the top of a Notion page) becomes the cover image. Without one, the site shows a title card in the site colours.
 
 ### 2. Connect Notion to the site
 
 1. Go to notion.so/profile/integrations, create a new internal integration called "Website", and copy its secret. That is `NOTION_TOKEN`.
-2. Open the database, click `•••` in the top right, choose Connections, and add the "Website" integration. Share only this database with it.
-3. Copy the database ID from its URL: the 32-character string just before `?v=`. That is `NOTION_DATABASE_ID`.
+2. Open each database, click `•••` in the top right, choose Connections, and add the "Website" integration. Share only these two databases with it.
+3. Copy each database's ID: the 32-character string just before `?v=` in its link. For a database inside another page, hover over it and use `•••` → Copy link to view. The writing one is `NOTION_WRITING_DATABASE_ID`, the case studies one is `NOTION_WORK_DATABASE_ID`.
+
+(A single combined database still works: set `NOTION_DATABASE_ID` instead and add a `Type` select with `Case study` and `Writing`.)
 
 ### 3. Set environment variables in Vercel
 
 Project → Settings → Environment Variables.
 
-- `NOTION_TOKEN`, `NOTION_DATABASE_ID` from step 2.
+- `NOTION_TOKEN`, `NOTION_WRITING_DATABASE_ID` and `NOTION_WORK_DATABASE_ID` from step 2.
 - `REVALIDATE_SECRET`, any long random string.
 - `NEXT_PUBLIC_SITE_URL`, your live address, for example `https://princepraisefakorede.vercel.app`.
 
@@ -55,11 +61,11 @@ Redeploy after adding them.
 
 ## Publishing
 
-1. Write the page in Notion and fill in the properties.
-2. Set Status to `Published` and make sure Publish date is today or earlier.
+1. Write the page in the writing or case studies database and fill in the properties.
+2. Set Status to `Published`. If Publish date is set, make sure it is today or earlier.
 3. The site checks Notion every ten minutes, so the page appears within ten minutes.
 
-To publish instantly, open the database's automations (lightning icon, available on paid Notion plans), add a trigger "When Status is set to Published", and an action "Send webhook" to:
+To publish instantly, open each database's automations (lightning icon, available on paid Notion plans), add a trigger "When Status is set to Published", and an action "Send webhook" to:
 
 ```
 https://YOUR-SITE/api/revalidate?secret=YOUR_REVALIDATE_SECRET

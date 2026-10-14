@@ -10,11 +10,16 @@ import { entrySchema, type Block, type Entry, type EntryType, type RichText } fr
 /**
  * Notion source.
  *
+ * Writing and case studies can live in two databases:
+ *   NOTION_WRITING_DATABASE_ID  every page is writing
+ *   NOTION_WORK_DATABASE_ID     every page is a case study
+ * or together in one, NOTION_DATABASE_ID, where the Type property decides.
+ *
  * Expected database properties (names are matched case-insensitively):
  *   Title         title       (required)
- *   Type          select      "Case study" or "Writing" (required)
+ *   Type          select      "Case study" or "Writing" (required only in a combined database)
  *   Status        status or select, only "Published" goes live (required)
- *   Publish date  date        (required; future dates stay hidden until that day)
+ *   Publish date  date        optional; defaults to the page's created date. Future dates stay hidden until that day
  *   Subtitle      text
  *   Summary       text        one line, used on cards and in search previews
  *   Tags          multi-select
@@ -26,9 +31,16 @@ import { entrySchema, type Block, type Entry, type EntryType, type RichText } fr
  */
 
 const token = process.env.NOTION_TOKEN
-const databaseId = process.env.NOTION_DATABASE_ID
 
-export const notionConfigured = Boolean(token && databaseId)
+type Source = { databaseId: string; type: EntryType | null }
+
+const sources: Source[] = [
+  { databaseId: process.env.NOTION_WRITING_DATABASE_ID, type: 'writing' as const },
+  { databaseId: process.env.NOTION_WORK_DATABASE_ID, type: 'work' as const },
+  { databaseId: process.env.NOTION_DATABASE_ID, type: null },
+].filter((s): s is Source => Boolean(s.databaseId))
+
+export const notionConfigured = Boolean(token && sources.length)
 
 let client: Client | null = null
 function notion() {
@@ -36,22 +48,25 @@ function notion() {
   return client
 }
 
-let dataSourceId: string | null = null
-async function resolveDataSourceId() {
-  if (dataSourceId) return dataSourceId
+const dataSourceIds = new Map<string, string>()
+async function resolveDataSourceId(databaseId: string) {
+  const cached = dataSourceIds.get(databaseId)
+  if (cached) return cached
+  let dataSourceId: string
   try {
-    const db = await notion().databases.retrieve({ database_id: databaseId! })
+    const db = await notion().databases.retrieve({ database_id: databaseId })
     const first = 'data_sources' in db ? db.data_sources?.[0]?.id : undefined
     if (!first) throw new Error('The Notion database has no data source.')
     dataSourceId = first
   } catch (error) {
     // The ID may already be a data source ID rather than a database ID.
     if (error instanceof APIResponseError && (error.code === 'object_not_found' || error.code === 'validation_error')) {
-      dataSourceId = databaseId!
+      dataSourceId = databaseId
     } else {
       throw error
     }
   }
+  dataSourceIds.set(databaseId, dataSourceId)
   return dataSourceId
 }
 
@@ -140,12 +155,12 @@ function pageUrl(page: PageObjectResponse) {
 /* Entries                                                             */
 /* ------------------------------------------------------------------ */
 
-function toEntry(page: PageObjectResponse): Entry | null {
+function toEntry(page: PageObjectResponse, sourceType: EntryType | null): Entry | null {
   const status = readText(page, 'Status').trim().toLowerCase()
   if (status !== 'published') return null
 
   const title = readTitle(page)
-  const type = readType(page)
+  const type = sourceType ?? readType(page)
   const where = `Notion page "${title || '(untitled)'}" (${pageUrl(page)})`
 
   if (!type) {
@@ -164,7 +179,7 @@ function toEntry(page: PageObjectResponse): Entry | null {
     subtitle: readText(page, 'Subtitle'),
     summary: readText(page, 'Summary'),
     tags: readTags(page),
-    publishDate: readDate(page, 'Publish date'),
+    publishDate: readDate(page, 'Publish date') || page.created_time.slice(0, 10),
     coverImage: page.cover ? `/api/notion-image/page/${page.id}/${version(page.last_edited_time)}` : null,
     featured: readCheckbox(page, 'Featured'),
     role: readText(page, 'Role').trim().toLowerCase() || null,
@@ -184,30 +199,14 @@ function toEntry(page: PageObjectResponse): Entry | null {
 
 export async function listEntries(): Promise<Entry[]> {
   if (!notionConfigured) {
-    console.warn('[content] NOTION_TOKEN or NOTION_DATABASE_ID is not set, so no entries will be shown.')
+    console.warn('[content] NOTION_TOKEN or a Notion database ID is not set, so no entries will be shown.')
     return []
   }
 
-  const source = await resolveDataSourceId()
-  const pages: PageObjectResponse[] = []
-  let cursor: string | undefined
-
-  do {
-    const response = await notion().dataSources.query({
-      data_source_id: source,
-      start_cursor: cursor,
-      page_size: 100,
-    })
-    for (const result of response.results) {
-      if (result.object === 'page' && isFullPage(result) && !result.in_trash) pages.push(result)
-    }
-    cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined
-  } while (cursor)
-
   const today = new Date().toISOString().slice(0, 10)
-  const entries = pages
-    .map(toEntry)
-    .filter((e): e is Entry => e !== null && e.publishDate <= today)
+  const entries = (await Promise.all(sources.map(listSource)))
+    .flat()
+    .filter((e) => e.publishDate <= today)
 
   // Keep slugs unique within each section.
   const seen = new Set<string>()
@@ -220,6 +219,28 @@ export async function listEntries(): Promise<Entry[]> {
     }
     seen.add(`${entry.type}/${entry.slug}`)
   }
+
+  return entries
+}
+
+async function listSource(source: Source): Promise<Entry[]> {
+  const dataSourceId = await resolveDataSourceId(source.databaseId)
+  const entries: Entry[] = []
+  let cursor: string | undefined
+
+  do {
+    const response = await notion().dataSources.query({
+      data_source_id: dataSourceId,
+      start_cursor: cursor,
+      page_size: 100,
+    })
+    for (const result of response.results) {
+      if (result.object !== 'page' || !isFullPage(result) || result.in_trash) continue
+      const entry = toEntry(result, source.type)
+      if (entry) entries.push(entry)
+    }
+    cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined
+  } while (cursor)
 
   return entries
 }
