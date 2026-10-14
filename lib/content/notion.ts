@@ -204,7 +204,7 @@ export async function listEntries(): Promise<Entry[]> {
   }
 
   const today = new Date().toISOString().slice(0, 10)
-  const entries = (await Promise.all(sources.map(listSource)))
+  const entries = (await Promise.all(sources.map(listSourceSafely)))
     .flat()
     .filter((e) => e.publishDate <= today)
 
@@ -221,6 +221,21 @@ export async function listEntries(): Promise<Entry[]> {
   }
 
   return entries
+}
+
+// One database failing (most often because it is not shared with the integration)
+// leaves its section empty instead of failing the whole build.
+async function listSourceSafely(source: Source): Promise<Entry[]> {
+  try {
+    return await listSource(source)
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error)
+    console.error(
+      `[content] Could not read the ${source.type ?? 'combined'} database (${source.databaseId}), so it shows no entries. ` +
+        `Check that it is shared with the Notion integration (••• → Connections). ${reason}`,
+    )
+    return []
+  }
 }
 
 async function listSource(source: Source): Promise<Entry[]> {
