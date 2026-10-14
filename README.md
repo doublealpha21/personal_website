@@ -11,7 +11,7 @@ Multi-page site built on the original one-page portfolio. Case studies and writi
 | `/experience` | The two-track timeline and every role, with a link to a case study where one exists |
 | `/work`, `/work/[slug]` | Case studies from Notion, filterable by tag |
 | `/writing`, `/writing/[slug]` | Writing from Notion, filterable by tag, with reading time |
-| `/contact` | Contact form, email and LinkedIn |
+| `/contact` | Cal.com booking link, email and LinkedIn |
 | `/portfolio` | The original one-page portfolio. Not linked from the site and not indexed; send the link to clients directly |
 | `/feed.xml` | RSS feed of everything published |
 
@@ -45,13 +45,11 @@ The page cover (Add cover, at the top of a Notion page) becomes the cover image.
 
 ### 3. Set environment variables in Vercel
 
-Project → Settings → Environment Variables. See `.env.example` for the full list.
+Project → Settings → Environment Variables.
 
 - `NOTION_TOKEN`, `NOTION_DATABASE_ID` from step 2.
-- `RESEND_API_KEY` from resend.com (free tier is enough). `CONTACT_TO_EMAIL` is where messages arrive.
-- `CONTACT_FROM_EMAIL` is optional. Until you verify a domain in Resend, leave it empty and Resend will only deliver to the email address on your Resend account, so sign up to Resend with the address you want messages sent to.
 - `REVALIDATE_SECRET`, any long random string.
-- `NEXT_PUBLIC_SITE_URL`, your live address, for example `https://praisefakorede.com`.
+- `NEXT_PUBLIC_SITE_URL`, your live address, for example `https://princepraisefakorede.vercel.app`.
 
 Redeploy after adding them.
 
@@ -83,7 +81,7 @@ Substack has no publishing API, so cross-posting is manual. Publish on the site 
 
 ## Editing the fixed content
 
-Roles, results, capabilities and credentials live in `lib/portfolio-data.ts`. The timeline positions every role from its `start` and `end` dates, so adding a role means adding one object to `roles` and choosing a free `row` within its track. The visible range is set at the top of `components/portfolio/dual-track-timeline.tsx`.
+Roles, results, capabilities, credentials and contact details (email, LinkedIn, the Cal.com booking link) live in `lib/portfolio-data.ts`. The timeline positions every role from its `start` and `end` dates, so adding a role means adding one object to `roles` and choosing a free `row` within its track. The visible range is set at the top of `components/portfolio/dual-track-timeline.tsx`.
 
 ## How the code is organised
 
@@ -101,7 +99,7 @@ app/
   feed.xml/  sitemap.ts  robots.ts  opengraph-image.tsx  not-found.tsx
 components/
   portfolio/                 original portfolio components (reused across the site)
-  site/                      navigation, footer, cards, tags, covers, Notion renderer, contact form
+  site/                      navigation, footer, cards, tags, covers, Notion renderer
 lib/
   content/index.ts           the content layer every page reads from
   content/notion.ts          the Notion source

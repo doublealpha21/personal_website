@@ -25,6 +25,7 @@ export const profile = {
   email: 'praisefakorede6@gmail.com',
   linkedin: 'https://linkedin.com/in/praise-fakorede',
   linkedinLabel: 'linkedin.com/in/praise-fakorede',
+  booking: 'https://cal.com/prince-praise-fakorede/30min',
   intro:
     'I look for the structural gaps before touching the process layer, then build the infrastructure that holds under pressure. Three years shipping mobile products across fintech, health-tech, proptech and Web3. Three years running multi-regional delivery across live events, media and energy.',
 }

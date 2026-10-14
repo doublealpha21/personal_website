@@ -1,5 +1,4 @@
-import Link from 'next/link'
-import { ArrowRight, ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { profile } from '@/lib/portfolio-data'
 
 const linkClass =
@@ -16,10 +15,11 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-center md:gap-10">
-          <Link href="/contact" className={linkClass}>
-            Send a message
-            <ArrowRight className="size-5" aria-hidden="true" />
-          </Link>
+          <a href={profile.booking} target="_blank" rel="noopener noreferrer" className={linkClass}>
+            Book a call
+            <ArrowUpRight className="size-5" aria-hidden="true" />
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
           <a href={`mailto:${profile.email}`} className={linkClass}>
             {profile.email}
           </a>
